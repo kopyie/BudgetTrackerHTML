@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  
+  <div class="top-bar">
+    <div>Balance = <span id="balance">$0</span></div>
+    <label class="switch"> 
+            <input type="checkbox" id="dark-mode-toggle">
+      <span class="slider round"></span>
+    </label>
+  </div>
+  
+    <div class="container">
+    <h2>Budget Tracker</h2>
+    
+    <div class="summary-card">
+      <p>💰 Income: <span id="income-total">$0</span></p>
+      <p>💸 Expense: <span id="expense-total">$0</span></p>
+      <!--<p>🧮 Balance: <span id="balance">$0</span></p>-->
+    </div>
+
+    <div>
+    <h2>Analytics</h2>
+    <canvas id="line-chart" height="200"></canvas>
+    <canvas id="pie-chart" height="200"></canvas>
+    
+    </div>
+
+    <form id="transaction-form">
+      <input type="number" id="amount" placeholder="Amount" required />
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense">Expense</option>
+      </select>
+      <select id="category" required>
+        <option value="">Select Category</option>
+      </select>
+      <input type="date" id="date" required />
+      <input type="text" id="note" placeholder="Note (optional)" />
+      <button type="submit">Add</button>
+    </form>
+
+    <div class="filters">
+      <label>
+        Month:
+        <input type="month" id="month-filter" />
+      </label>
+      <label>
+        Category:
+        <select id="category-filter">
+          <option value="">All</option>
+        </select>
+      </label>
+    </div>
+
+    <button id="export-btn">⬇️ Export to CSV</button>
+
+   
+
+    <h2>Transaction History</h2>
+    <ul id="transaction-list"></ul>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Transaction</h3>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id" />
+        <input type="number" id="edit-amount" required />
+        <select id="edit-type">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="edit-category" required></select>
+        <input type="date" id="edit-date" required />
+        <input type="text" id="edit-note" />
+        <div class="modal-actions">
+          <button type="submit">Save</button>
+          <button type="button" id="cancel-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="chart.js"></script>
+  <script src="app.js"></script>
+
+   <div class="bottom-nav">
+    <button onclick="switchView('transaction-list')">📋</button>
+    <button onclick="switchView('transaction-form')">➕</button>
+    <button onclick="switchView('charts-container')">📊</button>
+  </div>
+
+</body>
+</html>
