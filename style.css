@@ -246,6 +246,14 @@ button:hover {
   background: #ffa000;
 }
 
+#delete-btn {
+  background: #f44336;
+  color: #fff;
+}
+#delete-btn:hover {
+  background: #d32f2f;
+}
+
 /* =========================
    Transaction List
    ========================= */
@@ -262,6 +270,26 @@ button:hover {
   border-left: 5px solid;
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+#transaction-list-ul li {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.tx-category {
+  display: inline-block;
+  font-weight: 500;
+}
+
+.tx-amount {
+  position: absolute;
+  right: 16px;
+  top: 10px;
+  font-weight: bold;
+  font-size: 1.1em;
+  color: inherit;
 }
 
 .income {
@@ -439,5 +467,15 @@ body.dark .tab-btn.active,
 body.dark .tab-btn:hover {
   background: #ffb300;
   color: #23272b;
+}
+
+.date-header {
+  font-weight: bold;
+  color: #009688;
+  margin-top: 16px;
+  margin-bottom: 4px;
+  background: #f5f7fa;
+  border-radius: 8px;
+  padding: 4px 10px;
 }
 

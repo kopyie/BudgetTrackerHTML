@@ -117,19 +117,32 @@ function updateList(transactions) {
   let incomeTotal = 0, expenseTotal = 0;
 
   const monthObj = getMonthRange(monthRange);
-  const filtered = transactions.filter(tx => {
-    if (!monthObj) return true; // "all"
-    const [txYear, txMonth] = tx.date.split('-').map(Number);
-    return txYear === monthObj.year && txMonth === monthObj.month + 1;
-  });
+  // Sort by date descending, then by id (optional)
+  const filtered = transactions
+    .filter(tx => {
+      if (!monthObj) return true; // "all"
+      const [txYear, txMonth] = tx.date.split('-').map(Number);
+      return txYear === monthObj.year && txMonth === monthObj.month + 1;
+    })
+    .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 
+  // Group by date
+  let lastDate = null;
   filtered.forEach((tx) => {
+    if (tx.date !== lastDate) {
+      // Add date header
+      const dateLi = document.createElement("li");
+      dateLi.className = "date-header";
+      dateLi.textContent = tx.date;
+      list.appendChild(dateLi);
+      lastDate = tx.date;
+    }
     const li = document.createElement("li");
     li.className = tx.type;
     li.style.cursor = "pointer";
     li.innerHTML = `
-      <strong>${tx.type === "income" ? "+" : "-"}$${tx.amount}</strong>
-      — ${tx.category} (${tx.date})<br>
+      <span class="tx-category">${tx.category}</span>
+      <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span><br>
       <em>${tx.note || ""}</em>
     `;
     li.onclick = () => openEditModal(tx);
@@ -285,6 +298,15 @@ document.getElementById("edit-form").addEventListener("submit", async function (
 
 document.getElementById("cancel-btn").addEventListener("click", () => {
   document.getElementById("modal").classList.add("hidden");
+});
+
+document.getElementById("delete-btn").addEventListener("click", async function () {
+  const id = document.getElementById("edit-id").value;
+  if (confirm("Are you sure you want to delete this transaction?")) {
+    await deleteTransaction(Number(id));
+    await loadAndRender();
+    document.getElementById("modal").classList.add("hidden");
+  }
 });
 
 // --- INITIAL LOAD ---
