@@ -3,8 +3,6 @@ const expenseCategories = ["Food", "Transport", "Shopping", "Bills"];
 
 const typeSelect = document.getElementById("type");
 const categorySelect = document.getElementById("category");
-const monthFilter = document.getElementById("month-filter");
-const categoryFilter = document.getElementById("category-filter");
 
 let lineChart, pieChart;
 
@@ -81,13 +79,34 @@ async function updateTransaction(id, transaction) {
   });
 }
 
+// --- MONTH TABS LOGIC ---
+let monthRange = "this"; // default
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    monthRange = this.dataset.range;
+    loadAndRender();
+  });
+});
+
+function getMonthRange(range) {
+  const now = new Date();
+  let year = now.getFullYear();
+  let month = now.getMonth();
+  if (range === "this") {
+    return { year, month };
+  } else if (range === "last") {
+    if (month === 0) { year -= 1; month = 11; } else { month -= 1; }
+    return { year, month };
+  }
+  return null; // for "all"
+}
+
 // --- FILTERS ---
 function updateFilters(transactions) {
-  const allCats = [...new Set(transactions.map(t => t.category))];
-  categoryFilter.innerHTML = `<option value="">All</option>`;
-  allCats.forEach(cat => {
-    categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
-  });
+  // No category filter needed anymore
 }
 
 // --- LIST RENDER ---
@@ -95,14 +114,13 @@ function updateList(transactions) {
   const list = document.getElementById("transaction-list-ul");
   list.innerHTML = "";
 
-  const month = monthFilter.value;
-  const cat = categoryFilter.value;
-
   let incomeTotal = 0, expenseTotal = 0;
 
+  const monthObj = getMonthRange(monthRange);
   const filtered = transactions.filter(tx => {
-    return (!month || tx.date.startsWith(month)) &&
-           (!cat || tx.category === cat);
+    if (!monthObj) return true; // "all"
+    const [txYear, txMonth] = tx.date.split('-').map(Number);
+    return txYear === monthObj.year && txMonth === monthObj.month + 1;
   });
 
   filtered.forEach((tx) => {
@@ -228,10 +246,6 @@ document.getElementById("export-btn").addEventListener("click", async function (
 document.getElementById("dark-mode-toggle").addEventListener("change", function () {
   document.body.classList.toggle("dark", this.checked);
 });
-
-// --- FILTER EVENTS ---
-monthFilter.addEventListener("input", loadAndRender);
-categoryFilter.addEventListener("change", loadAndRender);
 
 // --- MODAL LOGIC ---
 function openEditModal(tx) {
