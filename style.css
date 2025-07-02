@@ -278,6 +278,10 @@ button:hover {
   position: relative;
 }
 
+#transaction-list-ul li:not(.date-header) {
+  margin-left: 10px;
+}
+
 .tx-category {
   display: inline-block;
   font-weight: 500;
@@ -288,7 +292,7 @@ button:hover {
   right: 16px;
   top: 10px;
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 0.95em;
   color: inherit;
 }
 
@@ -472,10 +476,25 @@ body.dark .tab-btn:hover {
 .date-header {
   font-weight: bold;
   color: #009688;
-  margin-top: 16px;
-  margin-bottom: 4px;
+  margin: 5px 0 4px 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0 0 0 0;
+  text-align: left;
+}
+
+.date-today-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.date-today-label {
+  display: inline-block;
   background: #f5f7fa;
-  border-radius: 8px;
-  padding: 4px 10px;
+  color: #222;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: default;
 }
 

@@ -231,6 +231,10 @@ document.getElementById('transaction-form').addEventListener('submit', async (e)
   await addTransaction(transaction);
   await loadAndRender();
   e.target.reset();
+  typeSelect.value = "expense";
+  updateCategoryOptions();
+  // Set date to today
+  document.getElementById('date').value = new Date().toISOString().slice(0, 10);
 });
 
 // --- EXPORT ---
