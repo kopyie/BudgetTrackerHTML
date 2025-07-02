@@ -1,8 +1,6 @@
 const incomeCategories = ["Salary", "Freelance", "Interest", "Gift"];
 const expenseCategories = ["Food", "Transport", "Shopping", "Bills"];
 
-let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-
 const typeSelect = document.getElementById("type");
 const categorySelect = document.getElementById("category");
 const monthFilter = document.getElementById("month-filter");
@@ -10,10 +8,7 @@ const categoryFilter = document.getElementById("category-filter");
 
 let lineChart, pieChart;
 
-function saveTransactions() {
-  localStorage.setItem("transactions", JSON.stringify(transactions));
-}
-
+// --- CATEGORY SELECTS ---
 function updateCategoryOptions() {
   const list = typeSelect.value === "income" ? incomeCategories : expenseCategories;
   categorySelect.innerHTML = '<option value="">Select Category</option>';
@@ -24,7 +19,70 @@ function updateCategoryOptions() {
 typeSelect.addEventListener("change", updateCategoryOptions);
 document.addEventListener("DOMContentLoaded", updateCategoryOptions);
 
-function updateFilters() {
+// --- LOCAL DATABASE FUNCTIONS (IndexedDB) ---
+const DB_NAME = 'budget-tracker-db';
+const STORE_NAME = 'transactions';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = event => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function fetchTransactions() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function addTransaction(transaction) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.add(transaction);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deleteTransaction(id) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function updateTransaction(id, transaction) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.put({ ...transaction, id: Number(id) });
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// --- FILTERS ---
+function updateFilters(transactions) {
   const allCats = [...new Set(transactions.map(t => t.category))];
   categoryFilter.innerHTML = `<option value="">All</option>`;
   allCats.forEach(cat => {
@@ -32,8 +90,9 @@ function updateFilters() {
   });
 }
 
-function updateList() {
-  const list = document.getElementById("transaction-list");
+// --- LIST RENDER ---
+function updateList(transactions) {
+  const list = document.getElementById("transaction-list-ul");
   list.innerHTML = "";
 
   const month = monthFilter.value;
@@ -46,23 +105,26 @@ function updateList() {
            (!cat || tx.category === cat);
   });
 
-  filtered.forEach((tx, i) => {
+  filtered.forEach((tx) => {
     const li = document.createElement("li");
     li.className = tx.type;
     li.innerHTML = `
       <strong>${tx.type === "income" ? "+" : "-"}$${tx.amount}</strong>
       — ${tx.category} (${tx.date})<br>
       <em>${tx.note || ""}</em><br>
-      <button data-id="${i}" class="view-btn">👁️</button>
-      <button data-id="${i}" class="delete-btn">🗑️</button>
+      <button data-id="${tx.id}" class="view-btn">👁️</button>
+      <button data-id="${tx.id}" class="delete-btn">🗑️</button>
     `;
     list.appendChild(li);
 
     incomeTotal += tx.type === "income" ? parseFloat(tx.amount) : 0;
     expenseTotal += tx.type === "expense" ? parseFloat(tx.amount) : 0;
 
-    li.querySelector(".view-btn").onclick = () => openEditModal(i);
-    li.querySelector(".delete-btn").onclick = () => deleteTransaction(i);
+    li.querySelector(".view-btn").onclick = () => openEditModal(tx);
+    li.querySelector(".delete-btn").onclick = async () => {
+      await deleteTransaction(tx.id);
+      await loadAndRender();
+    };
   });
 
   document.getElementById("income-total").textContent = "$" + incomeTotal.toFixed(2);
@@ -72,15 +134,7 @@ function updateList() {
   updateCharts(filtered);
 }
 
-function deleteTransaction(i) {
-  if (confirm("Delete this transaction?")) {
-    transactions.splice(i, 1);
-    saveTransactions();
-    updateFilters();
-    updateList();
-  }
-}
-
+// --- CHARTS ---
 function updateCharts(data) {
   const dates = {};
   const categories = {};
@@ -104,47 +158,59 @@ function updateCharts(data) {
   if (lineChart) lineChart.destroy();
   if (pieChart) pieChart.destroy();
 
-  lineChart = new Chart(document.getElementById("line-chart"), {
-    type: "line",
-    data: {
-      labels: lineLabels,
-      datasets: [
-        { label: "Income", data: incomeData, borderColor: "#4caf50", fill: true },
-        { label: "Expense", data: expenseData, borderColor: "#f44336", fill: true }
-      ]
-    }
-  });
+  if (document.getElementById("line-chart")) {
+    lineChart = new Chart(document.getElementById("line-chart"), {
+      type: "line",
+      data: {
+        labels: lineLabels,
+        datasets: [
+          { label: "Income", data: incomeData, borderColor: "#4caf50", fill: true },
+          { label: "Expense", data: expenseData, borderColor: "#f44336", fill: true }
+        ]
+      }
+    });
+  }
 
-  pieChart = new Chart(document.getElementById("pie-chart"), {
-    type: "pie",
-    data: {
-      labels: pieLabels,
-      datasets: [{
-        data: pieData,
-        backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#8e44ad", "#4caf50", "#e67e22"]
-      }]
-    }
-  });
+  if (document.getElementById("pie-chart")) {
+    pieChart = new Chart(document.getElementById("pie-chart"), {
+      type: "pie",
+      data: {
+        labels: pieLabels,
+        datasets: [{
+          data: pieData,
+          backgroundColor: ["#ff6384", "#36a2eb", "#ffce56", "#8e44ad", "#4caf50", "#e67e22"]
+        }]
+      }
+    });
+  }
 }
 
-document.getElementById("transaction-form").addEventListener("submit", function (e) {
+// --- MAIN LOAD & RENDER ---
+async function loadAndRender() {
+  const transactions = await fetchTransactions();
+  updateFilters(transactions);
+  updateList(transactions);
+  window._transactions = transactions; // for export and modal
+}
+
+// --- FORM SUBMIT ---
+document.getElementById('transaction-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const tx = {
-    amount: document.getElementById("amount").value,
-    type: typeSelect.value,
-    category: categorySelect.value,
-    date: document.getElementById("date").value,
-    note: document.getElementById("note").value
+  const transaction = {
+    amount: parseFloat(document.getElementById('amount').value),
+    type: document.getElementById('type').value,
+    category: document.getElementById('category').value,
+    date: document.getElementById('date').value,
+    note: document.getElementById('note').value
   };
-  transactions.push(tx);
-  saveTransactions();
-  this.reset();
-  updateCategoryOptions();
-  updateFilters();
-  updateList();
+  await addTransaction(transaction);
+  await loadAndRender();
+  e.target.reset();
 });
 
-document.getElementById("export-btn").addEventListener("click", function () {
+// --- EXPORT ---
+document.getElementById("export-btn").addEventListener("click", async function () {
+  const transactions = window._transactions || await fetchTransactions();
   if (!transactions.length) return alert("Nothing to export!");
   const csv = [["Amount", "Type", "Category", "Date", "Note"], ...transactions.map(tx => [
     tx.amount, tx.type, tx.category, tx.date, tx.note
@@ -158,17 +224,18 @@ document.getElementById("export-btn").addEventListener("click", function () {
   URL.revokeObjectURL(url);
 });
 
+// --- DARK MODE ---
 document.getElementById("dark-mode-toggle").addEventListener("change", function () {
   document.body.classList.toggle("dark", this.checked);
 });
 
-monthFilter.addEventListener("input", updateList);
-categoryFilter.addEventListener("change", updateList);
+// --- FILTER EVENTS ---
+monthFilter.addEventListener("input", loadAndRender);
+categoryFilter.addEventListener("change", loadAndRender);
 
-// MODAL logic
-function openEditModal(index) {
-  const tx = transactions[index];
-  document.getElementById("edit-id").value = index;
+// --- MODAL LOGIC ---
+function openEditModal(tx) {
+  document.getElementById("edit-id").value = tx.id;
   document.getElementById("edit-amount").value = tx.amount;
   document.getElementById("edit-type").value = tx.type;
   updateEditCategoryOptions();
@@ -193,19 +260,18 @@ function updateEditCategoryOptions() {
   });
 }
 
-document.getElementById("edit-form").addEventListener("submit", function (e) {
+document.getElementById("edit-form").addEventListener("submit", async function (e) {
   e.preventDefault();
-  const id = +document.getElementById("edit-id").value;
-  transactions[id] = {
+  const id = document.getElementById("edit-id").value;
+  const transaction = {
     amount: document.getElementById("edit-amount").value,
     type: document.getElementById("edit-type").value,
     category: document.getElementById("edit-category").value,
     date: document.getElementById("edit-date").value,
     note: document.getElementById("edit-note").value
   };
-  saveTransactions();
-  updateFilters();
-  updateList();
+  await updateTransaction(id, transaction);
+  await loadAndRender();
   document.getElementById("modal").classList.add("hidden");
 });
 
@@ -213,5 +279,5 @@ document.getElementById("cancel-btn").addEventListener("click", () => {
   document.getElementById("modal").classList.add("hidden");
 });
 
-updateFilters();
-updateList();
+// --- INITIAL LOAD ---
+document.addEventListener('DOMContentLoaded', loadAndRender);

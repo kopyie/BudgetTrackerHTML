@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Budget Tracker</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
@@ -18,9 +19,7 @@
   </div>
   
   <div class="container">
-    <h2>Budget Tracker</h2>
-    
-    <div class="summary-card">
+          <div class="summary-card">
       <p>💰 Income: <span id="income-total">$0</span></p>
       <p>💸 Expense: <span id="expense-total">$0</span></p>
       <!--<p>🧮 Balance: <span id="balance">$0</span></p>-->
@@ -122,10 +121,19 @@ function switchView(viewId) {
 
   <!-- Bottom Navigation placed outside .container -->
   <div class="bottom-nav">
-    <button onclick="switchView('transaction-list')">📋</button>
-    <button onclick="switchView('transaction-form')">➕</button>
-    <button onclick="switchView('charts-container')">📊</button>
-  </div>
+  <button onclick="switchView('transaction-list')" title="Transactions">
+    <i class="fa-solid fa-list"></i>
+    <span>Transactions</span>
+  </button>
+  <button onclick="switchView('transaction-form')" title="Add">
+    <i class="fa-solid fa-circle-plus"></i>
+    <span>Add</span>
+  </button>
+  <button onclick="switchView('charts-container')" title="Report">
+    <i class="fa-solid fa-chart-pie"></i>
+    <span>Report</span>
+  </button>
+</div>
 
 </body>
 </html>
