@@ -12,12 +12,12 @@
   <div class="top-bar">
     <div>Balance = <span id="balance">$0</span></div>
     <label class="switch"> 
-            <input type="checkbox" id="dark-mode-toggle">
+      <input type="checkbox" id="dark-mode-toggle">
       <span class="slider round"></span>
     </label>
   </div>
   
-    <div class="container">
+  <div class="container">
     <h2>Budget Tracker</h2>
     
     <div class="summary-card">
@@ -26,14 +26,14 @@
       <!--<p>🧮 Balance: <span id="balance">$0</span></p>-->
     </div>
 
-    <div>
-    <h2>Analytics</h2>
-    <canvas id="line-chart" height="200"></canvas>
-    <canvas id="pie-chart" height="200"></canvas>
-    
+    <!-- Analytics Section Wrapped for View Switching -->
+    <div id="charts-container">
+      <h2>Analytics</h2>
+      <canvas id="line-chart" height="200"></canvas>
+      <canvas id="pie-chart" height="200"></canvas>
     </div>
 
-    <form id="transaction-form">
+    <form id="transaction-form" class="hidden">
       <input type="number" id="amount" placeholder="Amount" required />
       <select id="type">
         <option value="income">Income</option>
@@ -47,25 +47,27 @@
       <button type="submit">Add</button>
     </form>
 
-    <div class="filters">
-      <label>
-        Month:
-        <input type="month" id="month-filter" />
-      </label>
-      <label>
-        Category:
-        <select id="category-filter">
-          <option value="">All</option>
-        </select>
-      </label>
+    <!-- Wrap filters and export button for view switching -->
+    <div id="filters-container">
+      <div class="filters">
+        <label>
+          Month:
+          <input type="month" id="month-filter" />
+        </label>
+        <label>
+          Category:
+          <select id="category-filter">
+            <option value="">All</option>
+          </select>
+        </label>
+        <button id="export-btn">⬇️ Export to CSV</button>
+      </div>
     </div>
 
-    <button id="export-btn">⬇️ Export to CSV</button>
-
-   
-
-    <h2>Transaction History</h2>
-    <ul id="transaction-list"></ul>
+    <div id="transaction-list">
+      <h2>Transaction History</h2>
+      <ul id="transaction-list-ul"></ul>
+    </div>
   </div>
 
   <!-- Modal -->
@@ -92,8 +94,34 @@
 
   <script src="chart.js"></script>
   <script src="app.js"></script>
+  <script>
+function switchView(viewId) {
+  // List all main section IDs
+  const sections = ['transaction-list', 'transaction-form', 'charts-container'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (id === viewId) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+  });
+  // Show filters only on transaction-list view
+  const filters = document.getElementById('filters-container');
+  if (filters) {
+    if (viewId === 'transaction-list') {
+      filters.classList.remove('hidden');
+    } else {
+      filters.classList.add('hidden');
+    }
+  }
+}
+</script>
 
-   <div class="bottom-nav">
+  <!-- Bottom Navigation placed outside .container -->
+  <div class="bottom-nav">
     <button onclick="switchView('transaction-list')">📋</button>
     <button onclick="switchView('transaction-form')">➕</button>
     <button onclick="switchView('charts-container')">📊</button>

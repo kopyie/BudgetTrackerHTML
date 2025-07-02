@@ -241,3 +241,7 @@ body.dark select {
   border-color: #444;
 }
 
+.hidden {
+  display: none !important;
+}
+
