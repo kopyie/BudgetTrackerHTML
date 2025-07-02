@@ -51,25 +51,23 @@
       <button type="submit">Add</button>
     </form>
 
-    <!-- Wrap filters and export button for view switching -->
-    <div id="filters-container">
-      <div class="filters">
-        <label>
-          Month:
-          <input type="month" id="month-filter" />
-        </label>
-        <label>
-          Category:
-          <select id="category-filter">
-            <option value="">All</option>
-          </select>
-        </label>
-        <button id="export-btn">⬇️ Export to CSV</button>
-      </div>
-    </div>
-
     <div id="transaction-list">
       <h2>Transaction History</h2>
+      <div id="filters-container">
+        <div class="filters">
+          <label>
+            Month:
+            <input type="month" id="month-filter" />
+          </label>
+          <label>
+            Category:
+            <select id="category-filter">
+              <option value="">All</option>
+            </select>
+          </label>
+          <button id="export-btn">⬇️ Export to CSV</button>
+        </div>
+      </div>
       <ul id="transaction-list-ul"></ul>
     </div>
   </div>
