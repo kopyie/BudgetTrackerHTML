@@ -126,23 +126,17 @@ function updateList(transactions) {
   filtered.forEach((tx) => {
     const li = document.createElement("li");
     li.className = tx.type;
+    li.style.cursor = "pointer";
     li.innerHTML = `
       <strong>${tx.type === "income" ? "+" : "-"}$${tx.amount}</strong>
       — ${tx.category} (${tx.date})<br>
-      <em>${tx.note || ""}</em><br>
-      <button data-id="${tx.id}" class="view-btn">👁️</button>
-      <button data-id="${tx.id}" class="delete-btn">🗑️</button>
+      <em>${tx.note || ""}</em>
     `;
+    li.onclick = () => openEditModal(tx);
     list.appendChild(li);
 
     incomeTotal += tx.type === "income" ? parseFloat(tx.amount) : 0;
     expenseTotal += tx.type === "expense" ? parseFloat(tx.amount) : 0;
-
-    li.querySelector(".view-btn").onclick = () => openEditModal(tx);
-    li.querySelector(".delete-btn").onclick = async () => {
-      await deleteTransaction(tx.id);
-      await loadAndRender();
-    };
   });
 
   document.getElementById("income-total").textContent = "$" + incomeTotal.toFixed(2);
