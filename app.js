@@ -152,9 +152,9 @@ function updateList(transactions) {
     expenseTotal += tx.type === "expense" ? parseFloat(tx.amount) : 0;
   });
 
-  document.getElementById("income-total").textContent = "$" + incomeTotal.toFixed(2);
-  document.getElementById("expense-total").textContent = "$" + expenseTotal.toFixed(2);
-  document.getElementById("balance").textContent = "$" + (incomeTotal - expenseTotal).toFixed(2);
+  document.getElementById("income-total").textContent = incomeTotal.toFixed(2);
+  document.getElementById("expense-total").textContent = expenseTotal.toFixed(2);
+  document.getElementById("balance").textContent = (incomeTotal - expenseTotal).toFixed(2);
 
   updateCharts(filtered);
 }
@@ -254,9 +254,9 @@ document.getElementById("export-btn").addEventListener("click", async function (
 });
 
 // --- DARK MODE ---
-document.getElementById("dark-mode-toggle").addEventListener("change", function () {
-  document.body.classList.toggle("dark", this.checked);
-});
+//document.getElementById("dark-mode-toggle").addEventListener("change", function () {
+//  document.body.classList.toggle("dark", this.checked);
+//});
 
 // --- MODAL LOGIC ---
 function openEditModal(tx) {
