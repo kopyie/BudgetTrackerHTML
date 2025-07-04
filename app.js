@@ -170,9 +170,9 @@ function updateList(transactions) {
     expenseTotal += tx.type === "expense" ? parseFloat(tx.amount) : 0;
   });
 
-  document.getElementById("income-total").textContent = incomeTotal.toFixed(2);
-  document.getElementById("expense-total").textContent = expenseTotal.toFixed(2);
-  document.getElementById("balance").textContent = (incomeTotal - expenseTotal).toFixed(2);
+  document.getElementById("income-total").textContent = incomeTotal.toFixed(0);
+  document.getElementById("expense-total").textContent = expenseTotal.toFixed(0);
+  document.getElementById("balance").textContent = (incomeTotal - expenseTotal).toFixed(0);
 
   updateCharts(filtered);
 }
