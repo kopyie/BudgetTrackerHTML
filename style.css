@@ -57,14 +57,14 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  padding: 10px;
+  padding: 13px;
   background: #009688;
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 10;
-  border-radius: 0 0 16px 16px;
+  /* border-radius: 0 0 16px 16px;*/
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -82,10 +82,10 @@ body {
   justify-content: space-between;
   align-items: center;
   background: #009688;
-  padding: 10px; /* Match top-bar's padding */
+  padding: 15px; /* Match top-bar's padding */
   box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
   z-index: 100;
-  border-radius: 16px 16px 0 0;
+  /* border-radius: 16px 16px 0 0; */
 }
 
 .bottom-nav button {
@@ -423,37 +423,7 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* =========================
-   Dark Mode
-   ========================= */
-body.dark {
-  background-color: #222;
-  color: #e0e0e0;
-}
 
-body.dark .container,
-body.dark .summary-card,
-body.dark form,
-body.dark canvas,
-body.dark li,
-body.dark .filters,
-body.dark .modal-content {
-  background-color: #263238 !important;
-  color: #e0e0e0;
-  box-shadow: none;
-}
-
-body.dark button {
-  background-color: #ffb300 !important;
-  color: #fff;
-}
-
-body.dark input,
-body.dark select {
-  background-color: #37474f;
-  color: #fff;
-  border-color: #444;
-}
 
 /* =========================
    Utility
