@@ -1,5 +1,23 @@
-const incomeCategories = ["Salary", "Freelance", "Interest", "Gift"];
-const expenseCategories = ["Food", "Transport", "Shopping", "Bills"];
+
+const incomeCategories = [
+  "Salary",
+  "Business",
+  "Investment",
+  "Gift",
+  "Interest",
+  "Other Income"
+];
+
+const expenseCategories = [
+  "Food",
+  "Transport",
+  "Shopping",
+  "Bills",
+  "Health",
+  "Education",
+  "Entertainment",
+  "Other Expense" 
+];
 
 const typeSelect = document.getElementById("type");
 const categorySelect = document.getElementById("category");
@@ -237,26 +255,9 @@ document.getElementById('transaction-form').addEventListener('submit', async (e)
   document.getElementById('date').value = new Date().toISOString().slice(0, 10);
 });
 
-// --- EXPORT ---
-document.getElementById("export-btn").addEventListener("click", async function () {
-  const transactions = window._transactions || await fetchTransactions();
-  if (!transactions.length) return alert("Nothing to export!");
-  const csv = [["Amount", "Type", "Category", "Date", "Note"], ...transactions.map(tx => [
-    tx.amount, tx.type, tx.category, tx.date, tx.note
-  ])].map(row => row.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = Object.assign(document.createElement("a"), {
-    href: url, download: "transactions.csv"
-  });
-  a.click();
-  URL.revokeObjectURL(url);
-});
 
-// --- DARK MODE ---
-//document.getElementById("dark-mode-toggle").addEventListener("change", function () {
-//  document.body.classList.toggle("dark", this.checked);
-//});
+
+
 
 // --- MODAL LOGIC ---
 function openEditModal(tx) {
