@@ -278,6 +278,11 @@ button:hover {
   box-shadow: 0 1px 3px rgba(47, 62, 206, 0.884);
 }
 
+#transaction-list-ul {
+  padding-inline-start: 10px; /* or 0, or any value you prefer */
+  padding-right: 10px;
+}
+
 #transaction-list-ul li {
   display: flex;
   flex-direction: column;
