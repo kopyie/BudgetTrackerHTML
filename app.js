@@ -1,4 +1,3 @@
-
 const incomeCategories = [
   "Salary",
   "Business",
@@ -254,6 +253,8 @@ document.getElementById('transaction-form').addEventListener('submit', async (e)
   updateCategoryOptions();
   // Set date to today
   document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+  // Switch to transaction list view
+  switchView('transaction-list');
 });
 
 
@@ -316,4 +317,8 @@ document.getElementById("delete-btn").addEventListener("click", async function (
 });
 
 // --- INITIAL LOAD ---
-document.addEventListener('DOMContentLoaded', loadAndRender);
+document.addEventListener('DOMContentLoaded', () => {
+  updateCategoryOptions();
+  document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+  loadAndRender();
+});
