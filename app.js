@@ -160,8 +160,9 @@ function updateList(transactions) {
     li.style.cursor = "pointer";
     li.innerHTML = `
       <span class="tx-category">${tx.category}</span>
-      <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span><br>
       <em>${tx.note || ""}</em>
+      <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span><br>
+        
     `;
     li.onclick = () => openEditModal(tx);
     list.appendChild(li);
