@@ -212,6 +212,11 @@ form {
   font-size: 14px; /* Set this to your desired size */
 }
 
+#date {
+  width: 50%;
+  align-self: flex-end
+}
+
 form.hidden {
   display: none;
 }
