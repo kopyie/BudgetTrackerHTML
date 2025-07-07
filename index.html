@@ -1,139 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Budget Tracker</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="all.min.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Prompt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple transition for the modal */
+        .modal-transition {
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+    </style>
 </head>
+<body class="bg-gray-100">
 
-<body>
-  
-  <div class="top-bar">
-    <div>Balance = <span id="balance">$0</span> MMK </div>
-    
-  </div>
-  
-  <div class="container">
-          <div class="summary-card">
-  <div class="summary-item income">
-    <p>💰 Income</p>
-    <div class="summary-value" id="income-total">$0</div>
-  </div>
-  <div class="summary-item expense">
-    <p>💸 Expense</p>
-    <div class="summary-value" id="expense-total">$0</div>
-  </div>
-</div>
+    <!-- The main content is now expected to be in main.html -->
+    <!-- This initial page only contains the modal. -->
 
-    <!-- Analytics Section Wrapped for View Switching -->
-    <div id="charts-container">
-      <h2>Analytics</h2>
-      <canvas id="line-chart" height="200"></canvas>
-      <h2>Expense structure</h2>
-      <canvas id="pie-chart" height="200"></canvas>
-    </div>
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 modal-transition">
+        <!-- Modal Dialog -->
+        <div id="modal" class="bg-white w-full max-w-md p-8 rounded-2xl shadow-2xl transform scale-100 modal-transition">
+            
+            <!-- Modal Header -->
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-900">Thanks for Arriving Here</h2>
+                <p class="mt-2 text-gray-600">App လေးတစ်ခု စမ်း‌သပ်နေတာအတွက်</br> 
+                                                Feedback လေး ပေးစေချင်ပါတယ်</br>
+                                                ဒါက web version ဖြစ်ပါတယ်</br>
+                                                User Data ကို Server မှာ မသိမ်းဆည်းပါဘူး</br>
+                                                မိမိ Devices Storage မှာသာ သိမ်းဆည်းတာဖြစ်ပါတယ်</br>
+                                                Android app ကိုလည်း Download လုပ်နိုင်ပါတယ်
+                </p>
+            </div>
 
-    <form id="transaction-form" class="hidden">
-      <input type="number" id="amount" placeholder="Amount" required />
-      <select id="type">
-        <option value="income">Income</option>
-        <option value="expense" selected>Expense</option>
-      </select>
-      <select id="category" required>
-        <option value="">Select Category</option>
-      </select>
-      <input type="date" id="date" required />
-      <input type="text" id="note" placeholder="Note (optional)" />
-      <button type="submit">Add</button>
-    </form>
-
-    <div id="transaction-list">
-      
-      <div id="filters-container">
-        <div class="filters">
-          <div class="month-tabs">
-            <button class="tab-btn active" data-range="this">This Month</button>
-            <button class="tab-btn" data-range="last">Last Month</button>
-            <button class="tab-btn" data-range="all">All</button>
-          </div>
-          
-          <!-- <input type="month" id="month-filter" /> -->
-
-          <!-- <button id="export-btn">Export</button> -->
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+                <!-- OK Button -->
+                <button id="ok-button" class="w-full sm:w-1/2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-200">
+                    OK
+                </button>
+                <!-- Download Button -->
+                <button id="download-button" class="w-full sm:w-1/2 bg-green-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition duration-200">
+                    Download
+                </button>
+            </div>
         </div>
-      </div>
-      <ul id="transaction-list-ul"></ul>
     </div>
-  </div>
 
-  <!-- Modal -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <h3>Edit Transaction</h3>
-      <form id="edit-form">
-        <input type="hidden" id="edit-id" />
-        <input type="number" id="edit-amount" required />
-        <select id="edit-type">
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
-        </select>
-        <select id="edit-category" required></select>
-        <input type="date" id="edit-date" required />
-        <input type="text" id="edit-note" />
-        <div class="modal-actions">
-          <button type="submit">Save</button>
-          <button type="button" id="delete-btn" style="background:#f44336;">Delete</button>
-          <button type="button" id="cancel-btn">Cancel</button>
-        </div>
-      </form>
-    </div>
-  </div>
+    <script>
+        // --- DOM Element Selection ---
+        // Get references to the HTML elements we need to interact with.
+        const okButton = document.getElementById('ok-button');
+        const downloadButton = document.getElementById('download-button');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modal = document.getElementById('modal');
+        
+        /**
+         * Hides the modal with a fade-out animation.
+         */
+        function closeModal() {
+            // Add classes to fade and shrink the modal for a smooth exit animation.
+            modal.classList.add('scale-95', 'opacity-0');
+            modalOverlay.classList.add('opacity-0');
 
-  <script src="chart.js"></script>
-  <script src="app.js"></script>
-  <script>
-function switchView(viewId) {
-  // List all main section IDs
-  const sections = ['transaction-list', 'transaction-form', 'charts-container'];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) {
-      if (id === viewId) {
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
-      }
-    }
-  });
-  // Show filters only on transaction-list view
-  const filters = document.getElementById('filters-container');
-  if (filters) {
-    if (viewId === 'transaction-list') {
-      filters.classList.remove('hidden');
-    } else {
-      filters.classList.add('hidden');
-    }
-  }
-}
-</script>
+            // After the animation finishes (300ms), hide the modal completely.
+            setTimeout(() => {
+                modalOverlay.classList.add('hidden');
+            }, 300);
+        }
 
-  <!-- Bottom Navigation placed outside .container -->
-  <div class="bottom-nav">
-  <button onclick="switchView('transaction-list')" title="Transactions">
-    <i class="fa-solid fa-list"></i>
-    <span>Transactions</span>
-  </button>
-  <button onclick="switchView('transaction-form')" title="Add">
-    <i class="fa-solid fa-circle-plus"></i>
-    <span>Add</span>
-  </button>
-  <button onclick="switchView('charts-container')" title="Report">
-    <i class="fa-solid fa-chart-pie"></i>
-    <span>Report</span>
-  </button>
-</div>
+        // --- Event Listeners ---
+        // Listen for a click event on the "OK" button to navigate to the main application page.
+        okButton.addEventListener('click', () => {
+            console.log('OK button clicked. Navigating to main.html');
+            // This line will redirect the user to your main web app file.
+            window.location.href = 'main.html';
+        });
+
+        // Listen for a click event on the "Download" button.
+        downloadButton.addEventListener('click', () => {
+            // You can add your file download logic here.
+            // For now, it just logs a message and closes the modal.
+            console.log('Download button clicked. Starting download...');
+            
+            // Example: To download a file, you could create a link and click it.
+            // const link = document.createElement('a');
+            // link.href = 'path/to/your/android-app.apk';
+            // link.download = 'your-app.apk';
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+
+            // After starting the download, we can close the modal.
+            closeModal();
+        });
+
+    </script>
 
 </body>
 </html>

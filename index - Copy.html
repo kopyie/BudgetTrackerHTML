@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Budget Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="all.min.css"/>
+</head>
+
+<body>
+  
+  <div class="top-bar">
+    <div>Balance = <span id="balance">$0</span> MMK </div>
+    
+  </div>
+  
+  <div class="container">
+          <div class="summary-card">
+  <div class="summary-item income">
+    <p>💰 Income</p>
+    <div class="summary-value" id="income-total">$0</div>
+  </div>
+  <div class="summary-item expense">
+    <p>💸 Expense</p>
+    <div class="summary-value" id="expense-total">$0</div>
+  </div>
+</div>
+
+    <!-- Analytics Section Wrapped for View Switching -->
+    <div id="charts-container">
+      <h2>Analytics</h2>
+      <canvas id="line-chart" height="200"></canvas>
+      <h2>Expense structure</h2>
+      <canvas id="pie-chart" height="200"></canvas>
+    </div>
+
+    <form id="transaction-form" class="hidden">
+      <input type="number" id="amount" placeholder="Amount" required />
+      <select id="type">
+        <option value="income">Income</option>
+        <option value="expense" selected>Expense</option>
+      </select>
+      <select id="category" required>
+        <option value="">Select Category</option>
+      </select>
+      <input type="date" id="date" required />
+      <input type="text" id="note" placeholder="Note (optional)" />
+      <button type="submit">Add</button>
+    </form>
+
+    <div id="transaction-list">
+      
+      <div id="filters-container">
+        <div class="filters">
+          <div class="month-tabs">
+            <button class="tab-btn active" data-range="this">This Month</button>
+            <button class="tab-btn" data-range="last">Last Month</button>
+            <button class="tab-btn" data-range="all">All</button>
+          </div>
+          
+          <!-- <input type="month" id="month-filter" /> -->
+
+          <!-- <button id="export-btn">Export</button> -->
+        </div>
+      </div>
+      <ul id="transaction-list-ul"></ul>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Edit Transaction</h3>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id" />
+        <input type="number" id="edit-amount" required />
+        <select id="edit-type">
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
+        </select>
+        <select id="edit-category" required></select>
+        <input type="date" id="edit-date" required />
+        <input type="text" id="edit-note" />
+        <div class="modal-actions">
+          <button type="submit">Save</button>
+          <button type="button" id="delete-btn" style="background:#f44336;">Delete</button>
+          <button type="button" id="cancel-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="chart.js"></script>
+  <script src="app.js"></script>
+  <script>
+function switchView(viewId) {
+  // List all main section IDs
+  const sections = ['transaction-list', 'transaction-form', 'charts-container'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (id === viewId) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+  });
+  // Show filters only on transaction-list view
+  const filters = document.getElementById('filters-container');
+  if (filters) {
+    if (viewId === 'transaction-list') {
+      filters.classList.remove('hidden');
+    } else {
+      filters.classList.add('hidden');
+    }
+  }
+}
+</script>
+
+  <!-- Bottom Navigation placed outside .container -->
+  <div class="bottom-nav">
+  <button onclick="switchView('transaction-list')" title="Transactions">
+    <i class="fa-solid fa-list"></i>
+    <span>Transactions</span>
+  </button>
+  <button onclick="switchView('transaction-form')" title="Add">
+    <i class="fa-solid fa-circle-plus"></i>
+    <span>Add</span>
+  </button>
+  <button onclick="switchView('charts-container')" title="Report">
+    <i class="fa-solid fa-chart-pie"></i>
+    <span>Report</span>
+  </button>
+</div>
+
+</body>
+</html>
