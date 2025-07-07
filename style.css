@@ -208,6 +208,10 @@ form {
   font-size: 14px; /* You can set your desired size here */
 }
 
+#transaction-form option {
+  font-size: 12px; /* Set this to your desired size */
+}
+
 form.hidden {
   display: none;
 }
