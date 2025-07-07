@@ -36,7 +36,7 @@
     </div>
 
     <form id="transaction-form" class="hidden">
-      <input type="number" id="amount" placeholder="Amount" required />
+      <input type="number" id="amount" inputmode="decimal" placeholder="Amount" required />
       <select id="type">
         <option value="income">Income</option>
         <option value="expense" selected>Expense</option>
@@ -57,11 +57,7 @@
             <button class="tab-btn active" data-range="this">This Month</button>
             <button class="tab-btn" data-range="last">Last Month</button>
             <button class="tab-btn" data-range="all">All</button>
-          </div>
-          
-          <!-- <input type="month" id="month-filter" /> -->
-
-          <!-- <button id="export-btn">Export</button> -->
+          </div>        
         </div>
       </div>
       <ul id="transaction-list-ul"></ul>
