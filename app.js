@@ -162,7 +162,7 @@ function updateList(transactions) {
     li.innerHTML = `
       <div class="transaction-header">
         <span class="tx-category">${tx.category}</span>
-        <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span>
+        <span class="tx-amount ${tx.type}">${tx.type === "income" ? "+" : "-"}${tx.amount}</span>
       </div>
       <em class="tx-note">${tx.note || ""}</em>
     `;

@@ -315,6 +315,15 @@ button:hover {
   font-size: 0.9em;
   color: #555; /* A muted text color that fits your theme */
 }
+/* Add these new rules to your style.css */
+
+.tx-amount.income {
+  color: #4caf50; /* Green color for income */
+}
+
+.tx-amount.expense {
+  color: #f44336; /* Red color for expense */
+}
 
 /* Set green for income and red for expense */
 #transaction-list-ul li.income {
