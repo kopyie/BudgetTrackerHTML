@@ -201,6 +201,13 @@ form {
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
   margin-bottom: 20px;
 }
+
+#transaction-form input,
+#transaction-form select,
+#transaction-form button {
+  font-size: 12px; /* You can set your desired size here */
+}
+
 form.hidden {
   display: none;
 }
