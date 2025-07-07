@@ -205,7 +205,7 @@ form {
 #transaction-form input,
 #transaction-form select,
 #transaction-form button {
-  font-size: 12px; /* You can set your desired size here */
+  font-size: 14px; /* You can set your desired size here */
 }
 
 form.hidden {
