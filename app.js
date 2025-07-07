@@ -322,3 +322,28 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('date').value = new Date().toISOString().slice(0, 10);
   loadAndRender();
 });
+
+
+function switchView(viewId) {
+  // List all main section IDs
+  const sections = ['transaction-list', 'transaction-form', 'charts-container'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (id === viewId) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    }
+  });
+  // Show filters only on transaction-list view
+  const filters = document.getElementById('filters-container');
+  if (filters) {
+    if (viewId === 'transaction-list') {
+      filters.classList.remove('hidden');
+    } else {
+      filters.classList.add('hidden');
+    }
+  }
+}
