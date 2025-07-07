@@ -155,14 +155,18 @@ function updateList(transactions) {
       lastDate = tx.date;
     }
     const li = document.createElement("li");
-    li.className = tx.type;
+    li.className = tx.type; // This correctly sets the class for your border color
     li.style.cursor = "pointer";
+    
+    // This is the new two-line HTML structure
     li.innerHTML = `
-      <span class="tx-category">${tx.category}</span>
-      <em>${tx.note || ""}</em>
-      <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span><br>
-        
+      <div class="transaction-header">
+        <span class="tx-category">${tx.category}</span>
+        <span class="tx-amount">${tx.type === "income" ? "+" : "-"}${tx.amount}</span>
+      </div>
+      <em class="tx-note">${tx.note || ""}</em>
     `;
+    
     li.onclick = () => openEditModal(tx);
     list.appendChild(li);
 

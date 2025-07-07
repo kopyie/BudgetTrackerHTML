@@ -296,9 +296,24 @@ button:hover {
   margin-top: 2px;
   margin-bottom: 2px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   position: relative;
+}
+/* ADD these new rules to your CSS */
+
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tx-note {
+  display: block;
+  margin-top: 4px;
+  font-style: italic;
+  font-size: 0.9em;
+  color: #555; /* A muted text color that fits your theme */
 }
 
 /* Set green for income and red for expense */
